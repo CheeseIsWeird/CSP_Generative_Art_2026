@@ -1,80 +1,64 @@
-import math
+import random
 import simple_graphics as sg
 
 # =====================================================================
-# THE WAVE FUNCTION (Using only your exact framework functions)
+# THE SAND FUNCTION (Using only your exact framework functions)
 # =====================================================================
-def draw_ocean_waves(num_waves, wave_thickness):
+def draw_sand(y_position, height, num_dots=300):
     """
-    Draws a clean wave strip matching the image structure with no bottom bulges.
+    Draws a sand-colored rectangle with scattered black dots to look like texture.
     
     Parameters:
-    - num_waves: How many wave peaks appear from left to right across the page.
-    - wave_thickness: The vertical height of the solid water base strip.
+    - y_position: Where the top of the sand rectangle starts vertically.
+    - height: How tall the sand rectangle is.
+    - num_dots: How many black sand specks to scatter around.
     """
-    # Safe canvas dimension lookup
     canvas_width = int(sg._canvas['width'])
-    canvas_height = int(sg._canvas['height'])
     
-    sky_color = "white"
-    dark_blue = "#006ccf"
-    light_blue = "#a6e3f9"
+    # Define sand colors
+    sand_color = "#eab308"  # A nice warm sandy yellow/gold hex
+    dot_color = "black"
     
-    # 1. Clear background
-    sg.fill_background(sky_color)
+    # 1. Draw the solid sand rectangle base
+    sg.set_fill_color(sand_color)
+    sg.set_outline_color(sand_color)
+    sg.fill_rectangle(0, y_position, canvas_width, height)
     
-    # Dynamically calculate the horizontal step size so exactly 'num_waves' fit
-    wave_step = canvas_width / max(1, num_waves)
-    radius_main = wave_step * 0.5  # Scale the circles perfectly to match the step width
+    # 2. Scatter the black textured specks randomly within the rectangle
+    sg.set_fill_color(dot_color)
+    sg.set_outline_color(dot_color)
     
-    # Set the baseline position in the middle of the screen
-    wave_base_y = canvas_height * 0.5
-    
-    # PHASE 1: Draw all the circular wave peaks and cutouts first
-    for i in range(int(num_waves) + 1):
-        x = i * wave_step
+    for _ in range(num_dots):
+        # Pick a random coordinate inside the boundaries of the sand rectangle
+        rand_x = random.randint(0, canvas_width)
+        rand_y = random.randint(y_position, y_position + height)
         
-        # 1. Main Dark Blue Wave Hump (Large Circle)
-        sg.set_fill_color(dark_blue)
-        sg.set_outline_color(dark_blue)
-        sg.fill_circle(center_x=x, center_y=wave_base_y, radius=radius_main)
+        # Pick a random tiny radius (1 or 2 pixels) so the dots vary in size
+        dot_radius = random.randint(1, 2)
         
-        # 2. Light Blue Crest Cap (Medium Circle shifted up and left)
-        sg.set_fill_color(light_blue)
-        sg.set_outline_color(light_blue)
-        sg.fill_circle(center_x=x - (radius_main * 0.15), center_y=wave_base_y - (radius_main * 0.25), radius=radius_main * 0.7)
-        
-        # 3. Inner Dark Blue Overlay (Brings back the main color under the cap)
-        sg.set_fill_color(dark_blue)
-        sg.set_outline_color(dark_blue)
-        sg.fill_circle(center_x=x - (radius_main * 0.1), center_y=wave_base_y - (radius_main * 0.15), radius=radius_main * 0.65)
-        
-        # 4. The "Hook" Cutout (White Circle carving out the right side)
-        sg.set_fill_color(sky_color)
-        sg.set_outline_color(sky_color)
-        sg.fill_circle(center_x=x + (radius_main * 0.85), center_y=wave_base_y - (radius_main * 0.1), radius=radius_main * 0.6)
-        
-        # 5. Little Water Droplets inside the curve hollow
-        sg.set_fill_color(light_blue)
-        sg.set_outline_color(light_blue)
-        sg.fill_circle(center_x=x + (radius_main * 0.1), center_y=wave_base_y - (radius_main * 0.2), radius=3)
-        sg.fill_circle(center_x=x + (radius_main * 0.3), center_y=wave_base_y - (radius_main * 0.45), radius=2)
-        sg.fill_circle(center_x=x + (radius_main * 0.45), center_y=wave_base_y - (radius_main * 0.15), radius=3)
-
-    # PHASE 2: Draw the solid base block LAST to mask and flatten any stray circles
-    sg.set_fill_color(dark_blue)
-    sg.set_outline_color(dark_blue)
-    sg.fill_rectangle(0, wave_base_y, canvas_width, wave_thickness)
+        # Stamp the dot
+        sg.fill_circle(center_x=rand_x, center_y=rand_y, radius=dot_radius)
 
 
 # =====================================================================
-# THE FUNCTION CALL
+# EXECUTING BOTH TOGETHER IN THE RENDERING WORKSPACE
 # =====================================================================
 def student_rendering(width, height):
-    """Main drawing function passed to the engine."""
-    # num_waves = 7 peaks stretching from left to right
-    # wave_thickness = 50 pixels tall base strip at the bottom
-    draw_ocean_waves(num_waves=7, wave_thickness=50)
+    """Main drawing workspace."""
+    # Set background sky
+    sg.fill_background("white")
+    
+    # 1. Draw the waves in the upper/middle section
+    draw_ocean_waves(num_waves=7, wave_thickness=80)
+    
+    # 2. Draw the sand layer right below the wave base
+    # We start it exactly where the wave base sits (height * 0.5) 
+    # and make it fill up the rest of the bottom of the screen.
+    sand_start_y = int(height * 0.5) + 80
+    sand_height = height - sand_start_y
+    
+    # Call the sand function with 400 dots scattered around
+    draw_sand(y_position=sand_start_y, height=sand_height, num_dots=400)
 
 
 if __name__ == "__main__":
