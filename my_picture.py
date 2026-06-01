@@ -17,28 +17,23 @@ def draw_ocean_waves(num_waves, wave_thickness):
     
     for i in range(int(num_waves) + 1):
         x = i * wave_step
-        
-        # 1. Main Dark Blue Wave Hump (Large Circle)
+
         sg.set_fill_color(dark_blue)
         sg.set_outline_color(dark_blue)
         sg.fill_circle(center_x=x, center_y=wave_base_y, radius=radius_main)
         
-        # 2. Light Blue Crest Cap (Medium Circle shifted up and left)
         sg.set_fill_color(light_blue)
         sg.set_outline_color(light_blue)
         sg.fill_circle(center_x=x - (radius_main * 0.15), center_y=wave_base_y - (radius_main * 0.25), radius=radius_main * 0.7)
         
-        # 3. Inner Dark Blue Overlay (Brings back the main color under the cap)
         sg.set_fill_color(dark_blue)
         sg.set_outline_color(dark_blue)
         sg.fill_circle(center_x=x - (radius_main * 0.1), center_y=wave_base_y - (radius_main * 0.15), radius=radius_main * 0.65)
-        
-        # 4. The "Hook" Cutout (White Circle carving out the right side)
+
         sg.set_fill_color(sky_color)
         sg.set_outline_color(sky_color)
         sg.fill_circle(center_x=x + (radius_main * 0.85), center_y=wave_base_y - (radius_main * 0.1), radius=radius_main * 0.6)
         
-        # 5. Little Water Droplets inside the curve hollow
         sg.set_fill_color(light_blue)
         sg.set_outline_color(light_blue)
         sg.fill_circle(center_x=x + (radius_main * 0.1), center_y=wave_base_y - (radius_main * 0.2), radius=3)
@@ -118,13 +113,11 @@ if __name__ == "__main__":
     
     
 def draw_top(width, height):
-    # 1. Initialize the background to white
     sg.fill_background("white")
-    
-    # 2. Baseline and existing elements (using width and height variables to prevent warnings)
+
     sg.set_outline_color("black")
     sg.set_line_thickness(1)
-    # Adjust the ground height slightly to 400 to match the resized roof
+
     ground_y = int(height * 0.66) # Around 400
     sg.draw_line(0, ground_y, width, ground_y) 
 
@@ -133,16 +126,14 @@ def draw_top(width, height):
     chimney_w = 45
     chimney_h = 140
     
-    # Chimney base body (red brick background color)
     sg.set_fill_color("#b33c24") 
     sg.set_outline_color("#5c1d10")
     sg.set_line_thickness(1)
     
     for i in range(chimney_h):
         sg.draw_line(chimney_x, chimney_y + i, chimney_x + chimney_w, chimney_y + i)
-        
-    # Add brick patterns to the chimney
-    sg.set_outline_color("#dfa396") # Mortar color between bricks
+
+    sg.set_outline_color("#dfa396") 
     row_height = 10
     for y in range(chimney_y, chimney_y + chimney_h, row_height):
         sg.draw_line(chimney_x, y, chimney_x + chimney_w, y)
@@ -153,8 +144,7 @@ def draw_top(width, height):
         for x in range(start_x, chimney_x + chimney_w, 15):
             sg.draw_line(x, y, x, y + row_height)
         shift = not shift
-        
-    # Chimney Cap
+
     sg.set_outline_color("black")
     sg.set_line_thickness(1)
     for i in range(8): 
@@ -163,12 +153,9 @@ def draw_top(width, height):
     sg.set_outline_color("#d0d0d0")
     sg.set_line_thickness(1)
     
-    # Center coordinates of the chimney opening
     smoke_base_x = chimney_x + (chimney_w // 2)
     smoke_base_y = chimney_y - 2
     
-    # Overlap multiple circles of increasing size to represent puffy rising smoke
-    # (x_offset, y_offset, radius)
     smoke_circles = [
         (0, -8, 9),
         (-5, -18, 13),
@@ -186,37 +173,30 @@ def draw_top(width, height):
     roof_top_x,  roof_top_y  = 410, 240
     roof_right_x, roof_right_y = 560, 400
     
-    # Bright red settings
     sg.set_fill_color("red") 
     sg.set_outline_color("black")
     sg.set_line_thickness(3)
     
-    # Draw the triangular roof
     sg.fill_triangle(roof_left_x, roof_left_y, roof_top_x, roof_top_y, roof_right_x, roof_right_y)
 
 def draw_sand(y_position, height, num_dots=300):
     canvas_width = int(sg._canvas['width']) 
-    sand_color = "#eab308"  # A nice warm sandy yellow/gold hex
+    sand_color = "#eab308"  # Yellow
     dot_color = "black"
     
-    # 1. Draw the solid sand rectangle base
     sg.set_fill_color(sand_color)
     sg.set_outline_color(sand_color)
     sg.fill_rectangle(0, y_position, canvas_width, height)
     
-    # 2. Scatter the black textured specks randomly within the rectangle
     sg.set_fill_color(dot_color)
     sg.set_outline_color(dot_color)
     
     for _ in range(num_dots):
-        # Pick a random coordinate inside the boundaries of the sand rectangle
         rand_x = random.randint(0, canvas_width)
         rand_y = random.randint(y_position, y_position + height)
         
-        # Pick a random tiny radius (1 or 2 pixels) so the dots vary in size
         dot_radius = random.randint(1, 2)
-        
-        # Stamp the dot
+
         sg.fill_circle(center_x=rand_x, center_y=rand_y, radius=dot_radius)
         
 def draw_bot(width, height):
