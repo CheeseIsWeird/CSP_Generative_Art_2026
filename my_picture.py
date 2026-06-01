@@ -1,6 +1,16 @@
 import random
 import simple_graphics as sg
 import math
+
+def draw_picture(width, height):
+    draw_ocean(width, height)
+    student_rendering(width, height)
+
+    draw_bot(width, height)
+    draw_top(width, height)
+    
+    
+
 def draw_ocean_waves(num_waves, wave_thickness):
     canvas_width = int(sg._canvas['width'])
     canvas_height = int(sg._canvas['height'])
@@ -9,7 +19,6 @@ def draw_ocean_waves(num_waves, wave_thickness):
     sky_color = "white"
     dark_blue = "#006ccf"
     light_blue = "#a6e3f9"
-    sg.fill_background(sky_color)
     wave_step = canvas_width / max(1, num_waves)
     radius_main = wave_step * 0.5
     
@@ -106,78 +115,77 @@ def draw_ocean(width, height):
     #Bird 3
     sg.draw_line(500, 60, 510, 50)
     sg.draw_line(510, 50, 520, 60)
-
-
-if __name__ == "__main__":
-    pass
-    
     
 def draw_top(width, height):
-    sg.fill_background("white")
 
+    house_w = width * 0.50
+    house_h = height * 0.25
+
+    house_x = (width - house_w) / 2
+    house_y = height * 0.42
+
+    roof_height = height * 0.16
+
+    roof_left_x = house_x - width * 0.03
+    roof_left_y = house_y
+
+    roof_peak_x = house_x + house_w / 2
+    roof_peak_y = house_y - roof_height
+
+    roof_right_x = house_x + house_w + width * 0.03
+    roof_right_y = house_y
+
+    # Roof
+    sg.set_fill_color("#b22222")
     sg.set_outline_color("black")
-    sg.set_line_thickness(1)
 
-    ground_y = int(height * 0.66) # Around 400
-    sg.draw_line(0, ground_y, width, ground_y) 
+    sg.fill_triangle(
+        roof_left_x,
+        roof_left_y,
+        roof_peak_x,
+        roof_peak_y,
+        roof_right_x,
+        roof_right_y
+    )
 
-    chimney_x = 460
-    chimney_y = 205
-    chimney_w = 45
-    chimney_h = 140
-    
-    sg.set_fill_color("#b33c24") 
-    sg.set_outline_color("#5c1d10")
-    sg.set_line_thickness(1)
-    
-    for i in range(chimney_h):
-        sg.draw_line(chimney_x, chimney_y + i, chimney_x + chimney_w, chimney_y + i)
+    # Chimney
+    chimney_w = house_w * 0.08
+    chimney_h = roof_height * 0.8
 
-    sg.set_outline_color("#dfa396") 
-    row_height = 10
-    for y in range(chimney_y, chimney_y + chimney_h, row_height):
-        sg.draw_line(chimney_x, y, chimney_x + chimney_w, y)
-        
-    shift = False
-    for y in range(chimney_y, chimney_y + chimney_h, row_height):
-        start_x = chimney_x + (6 if shift else 0)
-        for x in range(start_x, chimney_x + chimney_w, 15):
-            sg.draw_line(x, y, x, y + row_height)
-        shift = not shift
+    chimney_x = roof_peak_x + house_w * 0.18
+    chimney_y = roof_peak_y + roof_height * 0.15
 
-    sg.set_outline_color("black")
-    sg.set_line_thickness(1)
-    for i in range(8): 
-        sg.draw_line(chimney_x - 4, chimney_y + i, chimney_x + chimney_w + 4, chimney_y + i)
-    sg.set_fill_color("#e5e5e5")
-    sg.set_outline_color("#d0d0d0")
-    sg.set_line_thickness(1)
-    
-    smoke_base_x = chimney_x + (chimney_w // 2)
-    smoke_base_y = chimney_y - 2
-    
-    smoke_circles = [
-        (0, -8, 9),
-        (-5, -18, 13),
-        (7, -27, 15),
-        (-4, -40, 19),
-        (10, -53, 22),
-        (-8, -70, 26),
-        (12, -88, 28)
-    ]
-    
-    for offset_x, offset_y, radius in smoke_circles:
-        sg.fill_circle(smoke_base_x + offset_x, smoke_base_y + offset_y, radius)
+    sg.set_fill_color("#a52a2a")
 
-    roof_left_x, roof_left_y = 260, 400
-    roof_top_x,  roof_top_y  = 410, 240
-    roof_right_x, roof_right_y = 560, 400
-    
-    sg.set_fill_color("red") 
-    sg.set_outline_color("black")
-    sg.set_line_thickness(3)
-    
-    sg.fill_triangle(roof_left_x, roof_left_y, roof_top_x, roof_top_y, roof_right_x, roof_right_y)
+    sg.fill_rectangle(
+        chimney_x,
+        chimney_y,
+        chimney_w,
+        chimney_h
+    )
+
+    # Chimney cap
+    sg.set_fill_color("#7a1f1f")
+
+    sg.fill_rectangle(
+        chimney_x - chimney_w * 0.1,
+        chimney_y - chimney_h * 0.08,
+        chimney_w * 1.2,
+        chimney_h * 0.08
+    )
+
+    # Smoke
+    sg.set_fill_color("#dddddd")
+
+    smoke_x = chimney_x + chimney_w/2
+
+    for i in range(5):
+
+        sg.fill_circle(
+            smoke_x + (i % 2) * width * 0.01,
+            chimney_y - height * (0.03 * (i + 1)),
+            width * (0.015 + i * 0.003)
+        )
 
 def draw_sand(y_position, height, num_dots=300):
     canvas_width = int(sg._canvas['width']) 
@@ -198,44 +206,108 @@ def draw_sand(y_position, height, num_dots=300):
         dot_radius = random.randint(1, 2)
 
         sg.fill_circle(center_x=rand_x, center_y=rand_y, radius=dot_radius)
-        
 def draw_bot(width, height):
-    sg.set_fill_color("lightgray")
-    sg.fill_rectangle(100, 100, 600, 350)
+
+    # House dimensions
+    house_w = width * 0.50
+    house_h = height * 0.25
+
+    house_x = (width - house_w) / 2
+    house_y = height * 0.42
+
+    # Main house
+    sg.set_fill_color("#d9d9d9")
+    sg.set_outline_color("black")
+    sg.fill_rectangle(
+        house_x,
+        house_y,
+        house_w,
+        house_h
+    )
 
     # Door
-    sg.set_fill_color("brown")
-    sg.fill_rectangle(350, 250, 120, 200)
+    door_w = house_w * 0.18
+    door_h = house_h * 0.65
 
-    # Door Handle
+    door_x = house_x + house_w/2 - door_w/2
+    door_y = house_y + house_h - door_h
+
+    sg.set_fill_color("#8b5a2b")
+    sg.fill_rectangle(
+        door_x,
+        door_y,
+        door_w,
+        door_h
+    )
+
+    # Door knob
     sg.set_fill_color("gold")
-    sg.fill_circle(450, 350, 7)
+    sg.fill_circle(
+        door_x + door_w * 0.8,
+        door_y + door_h * 0.5,
+        width * 0.006
+    )
 
-    # Window
-    sg.set_fill_color("")
-    sg.fill_rectangle(170, 170, 140, 120)
+    # Left window
+    window_w = house_w * 0.18
+    window_h = house_h * 0.25
 
-    # Window frame
+    left_window_x = house_x + house_w * 0.12
+    window_y = house_y + house_h * 0.25
+
+    sg.set_fill_color("lightblue")
+    sg.fill_rectangle(
+        left_window_x,
+        window_y,
+        window_w,
+        window_h
+    )
+
+    # Right window
+    right_window_x = house_x + house_w * 0.70
+
+    sg.fill_rectangle(
+        right_window_x,
+        window_y,
+        window_w,
+        window_h
+    )
+
+    # Window frames
     sg.set_outline_color("black")
-    
-    sg.set_line_thickness(3)
 
-    sg.draw_line(240, 170, 240, 290)
-    sg.draw_line(170, 230, 310, 230)
+    for wx in [left_window_x, right_window_x]:
 
+        sg.draw_line(
+            wx + window_w/2,
+            window_y,
+            wx + window_w/2,
+            window_y + window_h
+        )
+
+        sg.draw_line(
+            wx,
+            window_y + window_h/2,
+            wx + window_w,
+            window_y + window_h/2
+        )   
 
 def student_rendering(width, height):
-    draw_ocean_waves(num_waves=7, wave_thickness=50)
-    sand_start_y = int(height * 0.5) + 80
+
+    draw_ocean_waves(
+        num_waves=7,
+        wave_thickness=int(height * 0.08)
+    )
+
+    sand_start_y = int(height * 0.63)
     sand_height = height - sand_start_y
-    draw_sand(y_position=sand_start_y, height=sand_height, num_dots=400)
+
+    draw_sand(
+        y_position=sand_start_y,
+        height=sand_height,
+        num_dots=400
+    )
 
 
 if __name__ == "__main__":
-    sg.start(draw_ocean, 600, 400)
-    sg.start(draw_top)
-    sg.start(student_rendering, width=800, height=600)
-    sg.start(draw_bot, width=800, height =600)
-    
-    
-
+    sg.start(draw_picture, width = 800, height = 600)
