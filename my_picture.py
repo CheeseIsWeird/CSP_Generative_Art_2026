@@ -1,15 +1,123 @@
 import random
 import simple_graphics as sg
+import math
+def draw_ocean_waves(num_waves, wave_thickness):
+    canvas_width = int(sg._canvas['width'])
+    canvas_height = int(sg._canvas['height'])
+    
+    colors = ["red", "green", "blue", "cyan", "magenta", "yellow"]
+    sky_color = "white"
+    dark_blue = "#006ccf"
+    light_blue = "#a6e3f9"
+    sg.fill_background(sky_color)
+    wave_step = canvas_width / max(1, num_waves)
+    radius_main = wave_step * 0.5
+    
+    wave_base_y = canvas_height * 0.5
+    
+    for i in range(int(num_waves) + 1):
+        x = i * wave_step
+        
+        # 1. Main Dark Blue Wave Hump (Large Circle)
+        sg.set_fill_color(dark_blue)
+        sg.set_outline_color(dark_blue)
+        sg.fill_circle(center_x=x, center_y=wave_base_y, radius=radius_main)
+        
+        # 2. Light Blue Crest Cap (Medium Circle shifted up and left)
+        sg.set_fill_color(light_blue)
+        sg.set_outline_color(light_blue)
+        sg.fill_circle(center_x=x - (radius_main * 0.15), center_y=wave_base_y - (radius_main * 0.25), radius=radius_main * 0.7)
+        
+        # 3. Inner Dark Blue Overlay (Brings back the main color under the cap)
+        sg.set_fill_color(dark_blue)
+        sg.set_outline_color(dark_blue)
+        sg.fill_circle(center_x=x - (radius_main * 0.1), center_y=wave_base_y - (radius_main * 0.15), radius=radius_main * 0.65)
+        
+        # 4. The "Hook" Cutout (White Circle carving out the right side)
+        sg.set_fill_color(sky_color)
+        sg.set_outline_color(sky_color)
+        sg.fill_circle(center_x=x + (radius_main * 0.85), center_y=wave_base_y - (radius_main * 0.1), radius=radius_main * 0.6)
+        
+        # 5. Little Water Droplets inside the curve hollow
+        sg.set_fill_color(light_blue)
+        sg.set_outline_color(light_blue)
+        sg.fill_circle(center_x=x + (radius_main * 0.1), center_y=wave_base_y - (radius_main * 0.2), radius=3)
+        sg.fill_circle(center_x=x + (radius_main * 0.3), center_y=wave_base_y - (radius_main * 0.45), radius=2)
+        sg.fill_circle(center_x=x + (radius_main * 0.45), center_y=wave_base_y - (radius_main * 0.15), radius=3)
+        
+    sg.set_fill_color(dark_blue)
+    sg.set_outline_color(dark_blue)
+    sg.fill_rectangle(0, wave_base_y, canvas_width, wave_thickness)
 
-def draw_picture(width, height):
-    """
-    Draws a resized red house roof, a perfectly aligned brick chimney,
-    and puffy light-gray smoke rising from the chimney.
     
-    AI Attribution: Geometry adjustment, color updates, and cloud-shaped smoke generation 
-    loops were crafted using Gemini for the Generative Art task.
-    """
+def draw_ocean(width, height):
+# SKY
+    sky_height = height * 3/8
+
+    sg.set_fill_color("skyblue")
+    sg.fill_rectangle(0, 0, width, sky_height)
+
+#OCEAN
+    ocean_y = sky_height
+    ocean_height = height - ocean_y
+
+    sg.set_fill_color("deepskyblue")
+    sg.fill_rectangle(0, ocean_y, width, ocean_height)
+
+#SUN
+    sun_radius = height / 4
+
+    sun_center_x = width / 2
+    sun_center_y = sky_height
+
+    sg.set_fill_color("yellow")
+
+#Draw top half of circle
+    sg.fill_arc(
+        sun_center_x - sun_radius,
+        sun_center_y - sun_radius,
+        sun_radius * 2,
+        sun_radius * 2,
+        0,
+        180
+    )
+
+#CLOUDS
     
+    sg.set_fill_color("white")
+
+    #Cloud 1
+    sg.fill_circle(120, 80, 25)
+    sg.fill_circle(150, 70, 30)
+    sg.fill_circle(180, 80, 25)
+
+    #Cloud 2
+    sg.fill_circle(420, 100, 20)
+    sg.fill_circle(445, 90, 28)
+    sg.fill_circle(475, 100, 20)
+
+#BIRDS
+    sg.set_outline_color("black")
+    sg.set_line_thickness(2)
+
+    #Bird 1
+    sg.draw_line(250, 70, 260, 60)
+    sg.draw_line(260, 60, 270, 70)
+
+    #Bird 2
+    sg.draw_line(320, 90, 330, 80)
+    sg.draw_line(330, 80, 340, 90)
+
+    #Bird 3
+    sg.draw_line(500, 60, 510, 50)
+    sg.draw_line(510, 50, 520, 60)
+
+
+if __name__ == "__main__":
+    pass
+    
+    
+def draw_top(width, height):
     # 1. Initialize the background to white
     sg.fill_background("white")
     
@@ -19,11 +127,7 @@ def draw_picture(width, height):
     # Adjust the ground height slightly to 400 to match the resized roof
     ground_y = int(height * 0.66) # Around 400
     sg.draw_line(0, ground_y, width, ground_y) 
-    
-    # =========================================================================
-    # [1] Draw the chimney (drawn before the roof to place it behind the roof)
-    # =========================================================================
-    # Precisely adjust the coordinates and size of the chimney to fit the smaller roof
+
     chimney_x = 460
     chimney_y = 205
     chimney_w = 45
@@ -55,11 +159,6 @@ def draw_picture(width, height):
     sg.set_line_thickness(1)
     for i in range(8): 
         sg.draw_line(chimney_x - 4, chimney_y + i, chimney_x + chimney_w + 4, chimney_y + i)
-
-    # =========================================================================
-    # [2] Add puffy cloud-shaped smoke (rising from the top of the chimney)
-    # =========================================================================
-    # Light gray settings (#e5e5e5) and light outlines
     sg.set_fill_color("#e5e5e5")
     sg.set_outline_color("#d0d0d0")
     sg.set_line_thickness(1)
@@ -83,10 +182,6 @@ def draw_picture(width, height):
     for offset_x, offset_y, radius in smoke_circles:
         sg.fill_circle(smoke_base_x + offset_x, smoke_base_y + offset_y, radius)
 
-    # =========================================================================
-    # [3] Draw the roof (resized and changed to a bright red color)
-    # =========================================================================
-    # Reduce the width and height compared to the original to make it compact
     roof_left_x, roof_left_y = 260, 400
     roof_top_x,  roof_top_y  = 410, 240
     roof_right_x, roof_right_y = 560, 400
@@ -99,25 +194,8 @@ def draw_picture(width, height):
     # Draw the triangular roof
     sg.fill_triangle(roof_left_x, roof_left_y, roof_top_x, roof_top_y, roof_right_x, roof_right_y)
 
-
-if __name__ == "__main__":
-    # Call the start function of simple_graphics to open the window.
-    sg.start(draw_picture)
-# =====================================================================
-# THE SAND FUNCTION (Using only your exact framework functions)
-# =====================================================================
 def draw_sand(y_position, height, num_dots=300):
-    """
-    Draws a sand-colored rectangle with scattered black dots to look like texture.
-    
-    Parameters:
-    - y_position: Where the top of the sand rectangle starts vertically.
-    - height: How tall the sand rectangle is.
-    - num_dots: How many black sand specks to scatter around.
-    """
-    canvas_width = int(sg._canvas['width'])
-    
-    # Define sand colors
+    canvas_width = int(sg._canvas['width']) 
     sand_color = "#eab308"  # A nice warm sandy yellow/gold hex
     dot_color = "black"
     
@@ -140,28 +218,44 @@ def draw_sand(y_position, height, num_dots=300):
         
         # Stamp the dot
         sg.fill_circle(center_x=rand_x, center_y=rand_y, radius=dot_radius)
+        
+def draw_bot(width, height):
+    sg.set_fill_color("lightgray")
+    sg.fill_rectangle(100, 100, 600, 350)
+
+    # Door
+    sg.set_fill_color("brown")
+    sg.fill_rectangle(350, 250, 120, 200)
+
+    # Door Handle
+    sg.set_fill_color("gold")
+    sg.fill_circle(450, 350, 7)
+
+    # Window
+    sg.set_fill_color("")
+    sg.fill_rectangle(170, 170, 140, 120)
+
+    # Window frame
+    sg.set_outline_color("black")
+    
+    sg.set_line_thickness(3)
+
+    sg.draw_line(240, 170, 240, 290)
+    sg.draw_line(170, 230, 310, 230)
 
 
-# =====================================================================
-# EXECUTING BOTH TOGETHER IN THE RENDERING WORKSPACE
-# =====================================================================
 def student_rendering(width, height):
-    """Main drawing workspace."""
-    # Set background sky
-    sg.fill_background("white")
-    
-    # 1. Draw the waves in the upper/middle section
-    draw_ocean_waves(num_waves=7, wave_thickness=80)
-    
-    # 2. Draw the sand layer right below the wave base
-    # We start it exactly where the wave base sits (height * 0.5) 
-    # and make it fill up the rest of the bottom of the screen.
+    draw_ocean_waves(num_waves=7, wave_thickness=50)
     sand_start_y = int(height * 0.5) + 80
     sand_height = height - sand_start_y
-    
-    # Call the sand function with 400 dots scattered around
     draw_sand(y_position=sand_start_y, height=sand_height, num_dots=400)
 
 
 if __name__ == "__main__":
+    sg.start(draw_ocean, 600, 400)
+    sg.start(draw_top)
     sg.start(student_rendering, width=800, height=600)
+    sg.start(draw_bot, width=800, height =600)
+    
+    
+
